@@ -1,4 +1,4 @@
-# Autocomplete Sample Demo
+# Autocomplete Sample Demo (Private Release version 20180123.1.0.0)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
@@ -22,9 +22,9 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 # Bug fix (FIXED)
 - SQL Statement wrong: " ...WHERE list_name ORDER BY.." should be with WHERE removed.
 - ProductNameInfo.name should be with String.trim() before registering the value.
+- When autocomplete is with "a", it does not give any popup with all product name starting with "a", but when typing "b", it does work as expected. This is cased somehow in relation to the feature to limit entries for popup. This bug has to do with GET request sent without id especified after always hiting "a".
 
 # Bug fix (OPEN)
-- When autocomplete is with "a", it does not give any popup with all product name starting with "a", but when typing "b", it does work as expected. This is cased somehow in relation to the feature to limit entries for popup.
 - Local execution for debugging not working (still) [Low priority]
 
 # Development Version Only
