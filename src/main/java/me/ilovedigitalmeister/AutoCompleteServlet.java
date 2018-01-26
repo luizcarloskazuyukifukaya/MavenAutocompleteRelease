@@ -20,6 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 import me.ilovedigitalmeister.data.ProductNameInfo;
 import me.ilovedigitalmeister.data.ProductNameInfoFactory;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * @author kazuyuf
@@ -30,6 +39,8 @@ public class AutoCompleteServlet extends HttpServlet {
     public static final int DEFAULT_CACHE_PERIOD_H = 48;
     private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 10; // Max display item number
     private static final int MAX_DISP_CACHE_NUM_ITEM = 100; // Max display item number
+    private static final String FILE_EXTENSTION_NAME = ".xml";
+    
     //private static final int MAX_DISP_CACHE_NUM_ITEM = 3000; // Max display item number [FINAL]
     private static boolean debug = false;
     
@@ -43,6 +54,11 @@ public class AutoCompleteServlet extends HttpServlet {
      */
     private HashMap<String, ProductNameInfo> _cache;
     private int _cachePeriodHours; //default cache period
+
+    /**
+     * Index to all xml file name on Google Storage
+     */
+    private HashMap<String, String> _storageXMLCacheIndex = new HashMap();;
     
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -333,6 +349,50 @@ public class AutoCompleteServlet extends HttpServlet {
          * </cache>
          */
         // NOT YET USING THE STORAGE TO CACHE THE XML FILES, HENCE, RETURN NULL FOR NOW.
+        
+        // _storageXMLCacheIndex.put(key, key+FILE_EXTENSTION_NAME);
+        String xmlFileName = _storageXMLCacheIndex.get(key);
+
+        // no cache registered on Storage Cache
+        if(xmlFileName == null) return null;
+
+        //xml file stored on Storage Cache
+
+        /**
+         * ******************************************************
+         * TODO :: get xml file from the Google Storage
+         * ******************************************************
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+
+        /**
+         * *** READ FROM STORAGE ***
+         * BlobId blobId = BlobId.of(bucketName, key+FILE_EXTENSTION_NAME);
+         * byte[] content = storage.readAllBytes(blobId);
+         * String contentString = new String(content, UTF_8);
+         */
+        
+        
         return null;
     }
 
@@ -358,7 +418,10 @@ public class AutoCompleteServlet extends HttpServlet {
 
                 // Save xml data into Google Storage
                 if(xmlStr != null) {
-                    putIntoStorageCache(key, xmlStr);                
+                    putIntoStorageCache(key, xmlStr);
+                    // Put entry on Storage Cache manager
+                    // KEY: key, VALUE: filename ([key].xml
+                    _storageXMLCacheIndex.put(key, key+FILE_EXTENSTION_NAME);
                 } else {
                     logger.log(Level.INFO," Entries matching {0} could not be found. Thus no XML cache was created in the Storage Cache.", key);                
                 }
@@ -384,27 +447,20 @@ public class AutoCompleteServlet extends HttpServlet {
         /**
          * put on Google Storage here
          */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+
+        // Create a bucket
+        String bucketName = "autcomplete_cache"; // Bucket name
+        Bucket bucket = storage.create(BucketInfo.of(bucketName));
+        
+        // Upload a blob to the newly created bucket
+        BlobId blobId = BlobId.of(bucketName, key+FILE_EXTENSTION_NAME);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+        try {
+            Blob blob = storage.create(blobInfo, key.getBytes("UTF_8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(AutoCompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }
 
