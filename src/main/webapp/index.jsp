@@ -20,7 +20,7 @@
 
     <p>In the form below enter a product name. Possible product names that will be completed are displayed below
         the form. For example, try typing in &quot;<b>PlayStation</b>&quot;, &quot;<b>Xbox&quot;</b> or &quot;<b>Nintendo Switch</b>&quot;
-        then click on one of the selections to see product details.</p>
+        then click on one of the selections to see product details. (Memo: AAXA - P*, Backbeat Books)</p>
 
     <form name="autofillform" action="autocomplete">
       <table border="0" cellpadding="5"> 

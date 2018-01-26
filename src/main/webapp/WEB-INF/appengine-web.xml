@@ -20,7 +20,7 @@ xsi:schemaLocation='http://kenai.com/projects/nbappengine/downloads/download/sch
     -->
     
     <!-- DEFAULT DEPLOYMENT HERE *FINAL -->
-    <application>gpresentationproject</application>
+    <application>autocompletepresentation</application>
 
 
     <version>1</version>

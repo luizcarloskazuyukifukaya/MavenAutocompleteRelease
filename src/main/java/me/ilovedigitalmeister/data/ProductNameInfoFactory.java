@@ -23,6 +23,11 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
     private static final int MAX_NAME_LENTH = 16;
+
+    /**
+     * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
+     */
+    private static int MAX_DISP_CANDIDATE_NUM_ITEM = 10;
     
     public HashMap getProducts() {
         return productNameInfos;
@@ -100,11 +105,12 @@ public class ProductNameInfoFactory {
     }
 
     /**
+     * Retrieve all product information into a memory cache
      * 
      * @return false if failed to retrieve from the database, otherwise true
      * @throws ServletException then failed with database operation
      */
-    private boolean getFromDatabase() throws ServletException {
+    public boolean getFromDatabase() throws ServletException {
         boolean retVal = false;
         HashMap<String, ProductNameInfo> products = productNameInfos;
         // User products for reference to the HasMap (Cache data)
@@ -186,6 +192,109 @@ public class ProductNameInfoFactory {
                     // records found
                     retVal = true;
                 }
+            }
+            
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Failed to connect to SQL DB {0}.", dbStr);
+            throw new ServletException("SQL error", e);
+        }
+        return retVal;
+    }
+
+        /**
+     * Retrieve all product information into a memory cache
+     * 
+     * @param key keyword to create the String cache
+     * @return false if failed to retrieve from the database, otherwise true
+     * @throws ServletException then failed with database operation
+     */
+    public static String getProductNameInfo(String key) throws ServletException {
+        
+        String retVal = null;
+        
+        if (key == null) return null;
+        if (key.length() < 1) return null;
+        
+        StringBuilder productNameInfoStr = new StringBuilder();
+
+        // Access Database here
+        StringBuilder sql = new StringBuilder();
+
+        String dbStr = System.getProperty("ae-cloudsql.local-database-url");  //local connection
+        
+        logger.log(Level.INFO, "LOCAL DB:{0} ", System.getProperty("ae-cloudsql.local-database-url"));
+        logger.log(Level.INFO, "  GCP DB:{0} ", System.getProperty("ae-cloudsql.cloudsql-database-url"));
+                
+        final String sqlStr  = "SELECT "
+                                    + "Id,"
+                                    + "list_name"
+                                        + " FROM autocomplete";
+
+        // WHERE list_name LIKE '[key]%' ... list_name starting with key
+        sql.append(sqlStr).append(" WHERE list_name LIKE ").append("'").append(key).append("%'");
+        sql.append(" ORDER BY list_name ASC LIMIT 1000;");
+         
+        if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
+           // Check the System properties to determine if we are running on appengine or not
+           // Google App Engine sets a few system properties that will reliably be present on a remote
+           // instance.
+           dbStr = System.getProperty("ae-cloudsql.cloudsql-database-url");
+           try {
+             // Load the class that provides the new "jdbc:google:mysql://" prefix.
+             Class.forName("com.mysql.jdbc.GoogleDriver");
+           } catch (ClassNotFoundException e) {
+             throw new ServletException("Error loading Google JDBC Driver", e);
+           }
+        }
+        logger.log(Level.INFO, "connecting to:{0} ", dbStr);
+        logger.log(Level.INFO, "SQL Statement:{0} ", sql.toString());
+        
+        try(Connection conn = DriverManager.getConnection(dbStr);) {
+
+            try (ResultSet rs = conn.prepareStatement(sql.toString()).executeQuery()) {
+                int i = 0;
+                while (rs.next()) {                 
+                    // Put the data into cache here 
+                    // Limit the size of list_name to 32 [s.substring(0, Math.min(s.length(), MAX_NAME_LENTH));]
+                    String n = rs.getString("list_name");
+                    if (n != null) {
+                        n = n.trim();
+                        if( !(n.isEmpty()) ) {
+                            /**
+                             * *******************************************************
+                             * LIMITING THE PRODUCT NAME HERE
+                             * *******************************************************
+                             */
+                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENTH));
+                            /**
+                             * *******************************************************
+                             * LIMITING THE PRODUCT NAME HERE (MAY REMOVE IT)
+                             * *******************************************************
+                             */
+
+                            // XML String created here
+                            productNameInfoStr.append("<product>");
+                            productNameInfoStr.append("<id>").append(rs.getString("Id")).append("</id>");
+                            productNameInfoStr.append("<name>").append(n).append("</name>");
+                            productNameInfoStr.append("</product>");
+                            i++;                            
+                        }
+                        
+                        if(i>MAX_DISP_CANDIDATE_NUM_ITEM-1) {
+                            logger.log(Level.INFO, "Too many entries ... skipping search with limit to {0}.", MAX_DISP_CANDIDATE_NUM_ITEM);                    
+                            break;
+                        }
+                    }
+                }
+                logger.log(Level.INFO, "Storage Cache: Got response from the database engine. {0} records is valid.", i);
+                if (i>0) {
+                    // records found
+                    retVal = productNameInfoStr.toString();
+                    logger.log(Level.INFO, "XML String:{0}", retVal);
+                }
+                
+                logger.log(Level.INFO, " Got {0} candidate for the Storage Cache file against the keyword.",i);
+                
             }
             
         } catch (SQLException e) {

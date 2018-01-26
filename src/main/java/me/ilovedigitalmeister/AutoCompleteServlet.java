@@ -55,7 +55,23 @@ public class AutoCompleteServlet extends HttpServlet {
         } else {
             logger.log(Level.INFO, "No cache is created now.");            
         }
+        
+        // SHOULD BE CONSIDER OTHER TIMING TO CREATE THE STORAGE CACHE
+        // target demo key (Memo: AAXA - P*, Backbeat Books)
+        createStorageCache("a");
+        createStorageCache("aa");
+        createStorageCache("aax");
+        createStorageCache("aaxa");
 
+        createStorageCache("b");
+        createStorageCache("ba");
+        createStorageCache("bac");
+        createStorageCache("back");
+        createStorageCache("backb");
+        createStorageCache("backbe");
+        createStorageCache("backbea");
+        createStorageCache("backbeat");
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -320,13 +336,76 @@ public class AutoCompleteServlet extends HttpServlet {
         return null;
     }
 
-    private void putIntoStorageCache(String key, String cache) {
+    /**
+     * This is to request creation of the cache on the Google Storage
+     * Product name information will be retrieved from the database and put into the xml file and stored in the cache
+     * 
+     * @param key This is the keyword on which product name start with. XML file will be named after the key value and the product name information will be stored in the xml file.
+     */
+    public void createStorageCache(String key) {
         /**
          * Here store the xml file for future reference without creating the product name information associated with the key
          */
         logger.log(Level.INFO, "key:{0}", key);
+        
+        if(key == null) {
+            // this should never happen
+            logger.log(Level.SEVERE," Wrong call with createStorageCache. The keyword is not specified.");                            
+        } else {        
+            try {
+                //eventual to call putIntoStorageCache
+                String xmlStr = ProductNameInfoFactory.getProductNameInfo(key);
+
+                // Save xml data into Google Storage
+                if(xmlStr != null) {
+                    putIntoStorageCache(key, xmlStr);                
+                } else {
+                    logger.log(Level.INFO," Entries matching {0} could not be found. Thus no XML cache was created in the Storage Cache.", key);                
+                }
+
+            } catch (ServletException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void putIntoStorageCache(String key, String cache) {
+        /**
+         * Here store the xml file for future reference without creating the product name information associated with the key
+         */
+        logger.log(Level.INFO, "************************************** DUMMY putIntoStorageCache");
+
+        logger.log(Level.INFO, "key:{0}", key);
         logger.log(Level.INFO, "XML Cache:{0}",cache);
 
+        logger.log(Level.INFO, "************************************** DUMMY putIntoStorageCache");
+        
+        
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+        /**
+         * put on Google Storage here
+         */
+                
     }
 
     
