@@ -22,12 +22,13 @@ public class ProductNameInfoFactory {
     
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
-    private static final int MAX_NAME_LENTH = 16;
+
+    public static final int MAX_NAME_LENTH = 20;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
      */
-    private static int MAX_DISP_CANDIDATE_NUM_ITEM = 10;
+    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 25;
     
     public HashMap getProducts() {
         return productNameInfos;
