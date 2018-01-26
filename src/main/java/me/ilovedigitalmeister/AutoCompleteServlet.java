@@ -21,13 +21,14 @@ import me.ilovedigitalmeister.data.ProductNameInfo;
 import me.ilovedigitalmeister.data.ProductNameInfoFactory;
 
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.UnsupportedEncodingException;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 /**
  *
@@ -53,19 +54,24 @@ public class AutoCompleteServlet extends HttpServlet {
      * Cache is with "Id" as a key, and "name" as a value. It is the key of the product and its name value.
      */
     private HashMap<String, ProductNameInfo> _cache;
-    private int _cachePeriodHours; //default cache period
-
+    private int _cachePeriodHours;
     /**
      * Index to all xml file name on Google Storage
-     */
-    private HashMap<String, String> _storageXMLCacheIndex = new HashMap();;
+     */ //default cache period
+
+    private final HashMap<String, String> _storageXMLCacheIndex;;
+
+    public AutoCompleteServlet() {
+        this._storageXMLCacheIndex = new HashMap();
+
+        // Initiate the cache refresh period here, if needed.
+        _cachePeriodHours = DEFAULT_CACHE_PERIOD_H; //default cache period
+    }
     
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.context = config.getServletContext();
         
-        // Initiate the cache refresh period here, if needed.
-        _cachePeriodHours = DEFAULT_CACHE_PERIOD_H; //default cache period
         if(createCache()) {
             logger.log(Level.INFO, "Cache is created now.");
         } else {
@@ -87,7 +93,6 @@ public class AutoCompleteServlet extends HttpServlet {
         createStorageCache("backbe");
         createStorageCache("backbea");
         createStorageCache("backbeat");
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -336,17 +341,12 @@ public class AutoCompleteServlet extends HttpServlet {
          * Here we should consider searching on the storage cache XML data created before.
          * Simply we should create a storage cache with the given word (String key) as KEY to retrieve the XML
          * Data should be stored as an XML file
-         * <cache>
-         * <cachekey>
          *  HERE COMES THE word (ex. "a", "ab", "ac"...)
-         * </cachekey>
-         * <cachedProducts>
+         *  FILENAME: [keyword].xml
          *  <product>
          *   <id>HERE COMES THE PRODUCT ID</id>
          *   <name>HERE COMES THE PRODUCT NAME</name>
          *  <product>
-         * </cachedProducts>
-         * </cache>
          */
         // NOT YET USING THE STORAGE TO CACHE THE XML FILES, HENCE, RETURN NULL FOR NOW.
         
@@ -354,46 +354,36 @@ public class AutoCompleteServlet extends HttpServlet {
         String xmlFileName = _storageXMLCacheIndex.get(key);
 
         // no cache registered on Storage Cache
-        if(xmlFileName == null) return null;
+        if(xmlFileName == null) {
+            logger.log(Level.INFO, "No XML cache found in the Storage Cache.");                    
+            return null;
+        }
 
         //xml file stored on Storage Cache
+        /**
+         * get from Google Storage here
+         * REFERENCE: https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-storage
+         */
+        Storage storage = StorageOptions.getDefaultInstance().getService();
 
-        /**
-         * ******************************************************
-         * TODO :: get xml file from the Google Storage
-         * ******************************************************
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
-        /**
-         * put on Google Storage here
-         */
+        // Create a bucket
+        String bucketName = "autcomplete_cache"; // Bucket name
+        
+        // Retrieve a blob from the bucket        
+        BlobId blobId = BlobId.of(bucketName, key+FILE_EXTENSTION_NAME);
+        byte[] content = storage.readAllBytes(blobId);
+        String contentString = new String(content, UTF_8);
 
-        /**
-         * *** READ FROM STORAGE ***
-         * BlobId blobId = BlobId.of(bucketName, key+FILE_EXTENSTION_NAME);
-         * byte[] content = storage.readAllBytes(blobId);
-         * String contentString = new String(content, UTF_8);
-         */
+        if(contentString.length() > 0) {
+            logger.log(Level.INFO, "Blob {0} includes product information data.", key+FILE_EXTENSTION_NAME);
+        } else {
+            logger.log(Level.INFO, "Blob {0} DOES NOT include product information data.", key+FILE_EXTENSTION_NAME);
+        }
+        sb.append(contentString);
         
+        logger.log(Level.INFO, "XML content: {}", sb.toString());                    
         
-        return null;
+        return sb;
     }
 
     /**
@@ -436,34 +426,38 @@ public class AutoCompleteServlet extends HttpServlet {
         /**
          * Here store the xml file for future reference without creating the product name information associated with the key
          */
-        logger.log(Level.INFO, "************************************** DUMMY putIntoStorageCache");
-
         logger.log(Level.INFO, "key:{0}", key);
         logger.log(Level.INFO, "XML Cache:{0}",cache);
-
-        logger.log(Level.INFO, "************************************** DUMMY putIntoStorageCache");
-        
-        
         /**
          * put on Google Storage here
+         * REFERENCE: https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-storage
          */
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
+        final String bucketName = "autcomplete_cache"; // Bucket name
+        final String blobName = key+FILE_EXTENSTION_NAME;
+
         // Create a bucket
-        String bucketName = "autcomplete_cache"; // Bucket name
-        Bucket bucket = storage.create(BucketInfo.of(bucketName));
+        if(storage.get(bucketName, Storage.BucketGetOption.fields()) != null) {
+            storage.create(BucketInfo.of(bucketName));            
+            logger.log(Level.INFO, "Bucket {0} was created.", bucketName);
+        }
         
         // Upload a blob to the newly created bucket
-        BlobId blobId = BlobId.of(bucketName, key+FILE_EXTENSTION_NAME);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-        try {
-            Blob blob = storage.create(blobInfo, key.getBytes("UTF_8"));
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(AutoCompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+        BlobId blobId = BlobId.of(bucketName, blobName);
+        Blob blob = storage.get(blobId);
+        if(blob != null) { //blog found, let us delete it.
+            boolean deleted = blob.delete(BlobSourceOption.generationMatch());
+            if(deleted) { //existed and deleted
+                logger.log(Level.INFO, "Blob {0} was found and deleted.", blobName);
+            } else {
+                logger.log(Level.INFO, "Blob {0} was NOT found.", blobName);            
+            }            
         }
-                
-    }
-
-    
+        // create new one
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+        storage.create(blobInfo, key.getBytes(UTF_8));            
+        logger.log(Level.INFO, "Blob {0} was created.", blobName);            
+    }    
 }
 
