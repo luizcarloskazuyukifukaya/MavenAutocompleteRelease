@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.logging.*;
 import java.util.HashMap;
 import javax.servlet.ServletException;
+import com.google.common.html.HtmlEscapers;
+
 
 /**
  *
@@ -273,7 +275,8 @@ public class ProductNameInfoFactory {
                              * LIMITING THE PRODUCT NAME HERE (MAY REMOVE IT)
                              * *******************************************************
                              */
-
+                            // HTML ESCAPE HERE
+                            n = HtmlEscapers.htmlEscaper().escape(n);
                             // XML String created here
                             productNameInfoStr.append("<product>");
                             productNameInfoStr.append("<id>").append(rs.getString("Id")).append("</id>");

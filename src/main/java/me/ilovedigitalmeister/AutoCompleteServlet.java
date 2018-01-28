@@ -84,9 +84,13 @@ public class AutoCompleteServlet extends HttpServlet {
     
     private void refreshStorageCache() {
         
-        String[] keywords = { 
-            "a", "aa", "aax", "aaxa",
-            "b", "ba", "bac", "back", "backb", "backbe", "backbea", "backbeat",
+        /**
+         * SHOULD CREATE THE TRIE TREE DATA AND SEARCH AGAINST IT.
+         * FOR PROTOTYPING, JUST SIMPLY TRIES THE ALL ALPHABETIC COMBINATION.
+         */
+        String[] nextKeywords = { 
+            "a", 
+            "b",
             "c",
             "d",
             "e",
@@ -112,9 +116,17 @@ public class AutoCompleteServlet extends HttpServlet {
             "y",
             "z"
         };
-        for(String keyword : keywords) {
-            createStorageCache(keyword);            
-        }        
+        for(String keywordPreFetchL1 : nextKeywords) {
+            createStorageCache(keywordPreFetchL1);
+/*            
+            for(String keywordPreFetchL2 : nextKeywords) {
+                createStorageCache(keywordPreFetchL1 + keywordPreFetchL2);            
+                for(String keywordPreFetchL3 : nextKeywords) {
+                    createStorageCache(keywordPreFetchL1 + keywordPreFetchL2 + keywordPreFetchL3);
+                }
+            }
+*/
+        }                
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
