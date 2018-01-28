@@ -35,10 +35,10 @@ public class AutoCompleteServlet extends HttpServlet {
     
     private ServletContext context;
     public static final int DEFAULT_CACHE_PERIOD_H = 48;
-    private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 25; // Max display item number
+    private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 50; // Max display item number
     private static final int MAX_DISP_CACHE_NUM_ITEM = 200; // Max display item number
     private static final String FILE_EXTENSTION_NAME = ".xml";
-    private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_cache";
+    private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_big_cache";
     private static final int TRIE_TREE_PRE_FETCH_DEPTH = 3; // To process pre-fetch on plus that depth
     
     //private static final int MAX_DISP_CACHE_NUM_ITEM = 3000; // Max display item number [FINAL]

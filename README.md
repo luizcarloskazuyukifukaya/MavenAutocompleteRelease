@@ -1,4 +1,4 @@
-# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.RC1 **Experimental**)
+# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.RC2.1 ** LENGTH MAX Experimental**)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
@@ -18,6 +18,7 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 - Search algorism and Better User Assistance (product name search with key is performed with String.startWith(), and there maybe a case where the result returns more than 100 results which is not relavent for users to look up and select the target word from that). Should implement as better way to prompt/advise user of the possible next letter (ex. next letter could be either "a", "b", "d", "x" only, but in total there are more than 100 words)
 
 # Bug fix (FIXED)
+- Fixed the case where the XML data is not found in the Storage Cache and saved on the cache. There was a bug where popup did not update based on new product name found. 
 - SQL Statement wrong: " ...WHERE list_name ORDER BY.." should be with WHERE removed.
 - ProductNameInfo.name should be with String.trim() before registering the value.
 - When autocomplete is with "a", it does not give any popup with all product name starting with "a", but when typing "b", it does work as expected. This is cased somehow in relation to the feature to limit entries for popup. This bug has to do with GET request sent without id especified after always hiting "a".

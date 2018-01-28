@@ -25,40 +25,39 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
 
-    public static final int MAX_NAME_LENTH = 16;
+    public static final int MAX_NAME_LENTH = 32;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
      */
-    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 25;
+    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 50;
     public static int MAX_DB_LOOKUP_NUM_ITEM = 50000;
+    private static boolean _debug = false;
     
     public HashMap getProducts() {
+        if (_debug) {
+            createDemoDataProducts();
+        } else {
+            try {
+                if(getFromDatabase()) {
+
+                    logger.log(Level.INFO, "Data created from database.");
+
+                } else {
+                    /** Create dummy data when instance is created **/            
+                    createDemoDataProducts();
+                }
+            } catch (ServletException ex) {
+                /** Create dummy data when instance is created **/            
+                createDemoDataProducts();
+                logger.log(Level.SEVERE, "SQL Database error occured. {0}", ex.toString());
+            }            
+        }
         return productNameInfos;
     }
     
-    public ProductNameInfoFactory() {
-        
-        try {
-            if(getFromDatabase()) {
-                
-                logger.log(Level.INFO, "Data created from database.");
-                
-            } else {
-                /** Create dummy data when instance is created **/            
-                createDemoDataProducts();
-            }
-        } catch (ServletException ex) {
-            /** Create dummy data when instance is created **/            
-            createDemoDataProducts();
-            logger.log(Level.SEVERE, "SQL Database error occured. {0}", ex.toString());
-        }
-    }
-
     public ProductNameInfoFactory(boolean mode) {
-        
-        /** Create dummy data when instance is created **/            
-        createDemoDataProducts();
+        _debug = mode;        
     }
     
     private HashMap createDemoDataProducts() {
