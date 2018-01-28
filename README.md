@@ -1,8 +1,8 @@
-# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.RC2.1 ** LENGTH MAX Experimental**)
+# Autocomplete Sample Demo (Public Preview version 20180128.1.1.0.RC3 ** LENGTH MAX Release**)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
-- This is sample application is deployed to http://gautocompletefinal.appspot.com/
+- This is sample application is deployed to [Final Demo URL](http://gautocompletefinal.appspot.com/)
 
 # Achieved
 - Autocomplete core feature, where GET request is sent to the Servlet (AutoCocompleteServlet?id=*) whenever the user type a letter in the input field. AJAX is used to process this task in the client browser application.
