@@ -38,8 +38,8 @@ public class AutoCompleteServlet extends HttpServlet {
     
     private ServletContext context;
     public static final int DEFAULT_CACHE_PERIOD_H = 48;
-    private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 10; // Max display item number
-    private static final int MAX_DISP_CACHE_NUM_ITEM = 100; // Max display item number
+    private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 25; // Max display item number
+    private static final int MAX_DISP_CACHE_NUM_ITEM = 200; // Max display item number
     private static final String FILE_EXTENSTION_NAME = ".xml";
     private static final String BUCKET_UNIQUE_NAME = "autcomplete_xml_cache";
     
@@ -82,19 +82,43 @@ public class AutoCompleteServlet extends HttpServlet {
         
         // SHOULD BE CONSIDER OTHER TIMING TO CREATE THE STORAGE CACHE
         // target demo key (Memo: AAXA - P*, Backbeat Books)
-        createStorageCache("a");
-        createStorageCache("aa");
-        createStorageCache("aax");
-        createStorageCache("aaxa");
-
-        createStorageCache("b");
-        createStorageCache("ba");
-        createStorageCache("bac");
-        createStorageCache("back");
-        createStorageCache("backb");
-        createStorageCache("backbe");
-        createStorageCache("backbea");
-        createStorageCache("backbeat");
+        refreshStorageCache();
+        
+    }
+    
+    private void refreshStorageCache() {
+        
+        String[] keywords = { 
+            "a", "aa", "aax", "aaxa",
+            "b", "ba", "bac", "back", "backb", "backbe", "backbea", "backbeat",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h",
+            "i",
+            "j",
+            "k",
+            "l",
+            "m",
+            "n",
+            "o",
+            "p",
+            "q",
+            "r",
+            "s",
+            "t",
+            "u",
+            "v",
+            "w",
+            "x",
+            "y",
+            "z"
+        };
+        for(String keyword : keywords) {
+            createStorageCache(keyword);            
+        }        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

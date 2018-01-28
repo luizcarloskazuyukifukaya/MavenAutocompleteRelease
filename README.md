@@ -1,4 +1,4 @@
-# Autocomplete Sample Demo (Public Release version 20180127.1.0.0)
+# Autocomplete Sample Demo (Public Preview version 20180128.1.0.0)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
@@ -9,6 +9,9 @@ This sample has a limitation where the cache into the memory is not optimized fo
 - On the Servlet side, product name, which is the target for the autocompletion to perform comparison, is read from the MySQL database when Servlet.init() is called. This way, the product name databased information can stay in the memory as a cache.
 Cache design is not yet the best to perform quick search as fast as possible (NEED IMPROVEMENT HERE, and need to do more investigation on 1) Trie Tree Structure algorism and 2)Google App Engine Memcache, to determine how to improve the performance.)
 - Cache mecanism (Data structure and cache performance) with Google Storage implemented. Though, timing to create the cache (XML files corresponding to the keyword) is not determinded. At this prototype, we simply implemented the cache sample creation on Servlet.init(). This part need to be consider on the final version.
+
+# Experiments
+- Increase the lookup of the SQL database to get up to 50000 records so the product names should be in the memory cache. When XML is to be created, now it should be created for any product name listed on candidate list.
 
 # Areas for improvements
 - Global scallability (Deployment to region, but still try to reverage one central database for easy operation of data integrety)

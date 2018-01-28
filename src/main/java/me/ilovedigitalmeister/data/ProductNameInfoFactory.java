@@ -29,6 +29,7 @@ public class ProductNameInfoFactory {
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
      */
     public static int MAX_DISP_CANDIDATE_NUM_ITEM = 25;
+    public static int MAX_DB_LOOKUP_NUM_ITEM = 50000;
     
     public HashMap getProducts() {
         return productNameInfos;
@@ -154,7 +155,7 @@ public class ProductNameInfoFactory {
 
         //sql.append(sqlStr).append(" ORDER BY list_name DESC;");;
         //sql.append(sqlStr).append(" WHERE list_name LIKE 'A%' ORDER BY list_name ASC LIMIT 50;");
-        sql.append(sqlStr).append(" ORDER BY list_name ASC LIMIT 5000;");
+        sql.append(sqlStr).append(" ORDER BY list_name ASC LIMIT ").append(MAX_DB_LOOKUP_NUM_ITEM).append(";");
          
         if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
            // Check the System properties to determine if we are running on appengine or not
