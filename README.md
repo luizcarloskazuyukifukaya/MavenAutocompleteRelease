@@ -1,4 +1,4 @@
-# Autocomplete Sample Demo (Public Preview version 20180128.1.0.0)
+# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.alpha **Experimental**)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
@@ -11,16 +11,11 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 - Cache mecanism (Data structure and cache performance) with Google Storage implemented. Though, timing to create the cache (XML files corresponding to the keyword) is not determinded. At this prototype, we simply implemented the cache sample creation on Servlet.init(). This part need to be consider on the final version.
 
 # Experiments
-- Increase the lookup of the SQL database to get up to 50000 records so the product names should be in the memory cache. When XML is to be created, now it should be created for any product name listed on candidate list.
+- No ProductNameInfo cache from DB no longer exist. Only XML cache on Google Storage for this version. Not yet with pre-fetch mechanism. Pre-fetch to be implemented later.
 
 # Areas for improvements
 - Global scallability (Deployment to region, but still try to reverage one central database for easy operation of data integrety)
 - Search algorism and Better User Assistance (product name search with key is performed with String.startWith(), and there maybe a case where the result returns more than 100 results which is not relavent for users to look up and select the target word from that). Should implement as better way to prompt/advise user of the possible next letter (ex. next letter could be either "a", "b", "d", "x" only, but in total there are more than 100 words)
-
-# Memo
-- /AutoCompleteServlet?action=debug : this will show the current cache. [FOR SUPPORT ONLY]
-- /AutoCompleteServlet?action=refresh : this will force cache to be recreated. [FOR SUPPORT ONLY]
-- /AutoCompleteServlet?action=demo : this is to use the dummy data instead of accessing the database data. [INTERNAL ONLY]
 
 # Bug fix (FIXED)
 - SQL Statement wrong: " ...WHERE list_name ORDER BY.." should be with WHERE removed.

@@ -23,7 +23,7 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
 
-    public static final int MAX_NAME_LENTH = 20;
+    public static final int MAX_NAME_LENTH = 32;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
@@ -234,7 +234,7 @@ public class ProductNameInfoFactory {
 
         // WHERE list_name LIKE '[key]%' ... list_name starting with key
         sql.append(sqlStr).append(" WHERE list_name LIKE ").append("'").append(key).append("%'");
-        sql.append(" ORDER BY list_name ASC LIMIT 1000;");
+        sql.append(" ORDER BY list_name ASC LIMIT ").append(MAX_DB_LOOKUP_NUM_ITEM).append(";");
          
         if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
            // Check the System properties to determine if we are running on appengine or not
