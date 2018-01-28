@@ -49,12 +49,7 @@ public class AutoCompleteServlet extends HttpServlet {
 
     // Cache for this Servlet
     // This cache will be updated regulary (Eg. every 24 hours);
-    
-    /**
-     * Cache is with "Id" as a key, and "name" as a value. It is the key of the product and its name value.
-     */
-//    private HashMap<String, ProductNameInfo> _cache;
-    private int _cachePeriodHours;
+        private int _cachePeriodHours;
     /**
      * Index to all xml file name on Google Storage
      */ //default cache period
@@ -63,7 +58,7 @@ public class AutoCompleteServlet extends HttpServlet {
      * This is to be implemented as GAE Memcache so the Batch App which is triggered by the Task Queue can update the XML Index.
      * 
      */
-    private final HashMap<String, String> _storageXMLCacheIndex;;
+    private final HashMap<String, String> _storageXMLCacheIndex;; // To be substitude with Google App Engine Memcache
 
     public AutoCompleteServlet() {
         this._storageXMLCacheIndex = new HashMap();
@@ -89,32 +84,7 @@ public class AutoCompleteServlet extends HttpServlet {
          * FOR PROTOTYPING, JUST SIMPLY TRIES THE ALL ALPHABETIC COMBINATION.
          */
         String[] nextKeywords = { 
-            "a", 
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "h",
-            "i",
-            "j",
-            "k",
-            "l",
-            "m",
-            "n",
-            "o",
-            "p",
-            "q",
-            "r",
-            "s",
-            "t",
-            "u",
-            "v",
-            "w",
-            "x",
-            "y",
-            "z"
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
         };
         for(String keywordPreFetchL1 : nextKeywords) {
             createStorageCache(keywordPreFetchL1);
@@ -157,7 +127,6 @@ public class AutoCompleteServlet extends HttpServlet {
     
     private void doAutoCompleteGet(String key, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        boolean addToXMLCache = false;
 
         final String blobName = key+FILE_EXTENSTION_NAME;
         StringBuilder sb = null;
@@ -167,7 +136,7 @@ public class AutoCompleteServlet extends HttpServlet {
         // check if user sent empty string
         if (!key.equals("")) {
             
-            logger.log(Level.INFO, "Pre-fetch with {0} ....", key);
+            logger.log(Level.INFO, "Pre-fetch request for {0} ....", key);
             requestPreFetch(key);
 
             logger.log(Level.INFO, "Searching for word starting with [{0}].", key);
@@ -185,7 +154,9 @@ public class AutoCompleteServlet extends HttpServlet {
                             // Put entry on Storage Cache manager
                             // KEY: key, VALUE: filename ([key].xml
                             _storageXMLCacheIndex.put(key, blobName);                        
-                            logger.log(Level.INFO,"XML {0} cache registered.", blobName);                
+                            logger.log(Level.INFO,"XML blob [{0}] cache registered.", blobName);   
+                            sb = new StringBuilder(xmlStr); 
+                            logger.log(Level.INFO,"XML content [{0}].", sb.toString());   
                         }
                     } else {
                         logger.log(Level.INFO," Entries matching {0} could not be found. Thus no XML cache was created in the Storage Cache.", key);                
@@ -390,6 +361,7 @@ public class AutoCompleteServlet extends HttpServlet {
          * Pre-fetch depth/level is defined by TRIE_TREE_PRE_FETCH_DEPTH
          * This should be processed on the Batch App, but this is for the memo for future reference.
          */
+        logger.log(Level.INFO, "** requestPreFetch({0}) not yet implemented. Just skipping pre-fetch request on Task Queue.", keyword);                        
         
         
         
