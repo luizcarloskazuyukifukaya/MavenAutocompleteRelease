@@ -39,6 +39,7 @@ public class AutoCompleteServlet extends HttpServlet {
     private static final int MAX_DISP_CACHE_NUM_ITEM = 200; // Max display item number
     private static final String FILE_EXTENSTION_NAME = ".xml";
     private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_cache";
+    private static final int TRIE_TREE_PRE_FETCH_DEPTH = 3; // To process pre-fetch on plus that depth
     
     //private static final int MAX_DISP_CACHE_NUM_ITEM = 3000; // Max display item number [FINAL]
     private static boolean debug = false;
@@ -58,6 +59,10 @@ public class AutoCompleteServlet extends HttpServlet {
      * Index to all xml file name on Google Storage
      */ //default cache period
 
+    /**
+     * This is to be implemented as GAE Memcache so the Batch App which is triggered by the Task Queue can update the XML Index.
+     * 
+     */
     private final HashMap<String, String> _storageXMLCacheIndex;;
 
     public AutoCompleteServlet() {
@@ -149,6 +154,10 @@ public class AutoCompleteServlet extends HttpServlet {
 
         // check if user sent empty string
         if (!key.equals("")) {
+            
+            logger.log(Level.INFO, "Pre-fetch with {0} ....", key);
+            requestPreFetch(key);
+
             logger.log(Level.INFO, "Searching for word starting with [{0}].", key);
             
             sb = getFromStorageCache(key);
@@ -185,12 +194,7 @@ public class AutoCompleteServlet extends HttpServlet {
         if (sb != null) {
             response.setContentType("text/xml");
             response.setHeader("Cache-Control", "no-cache");
-            response.getWriter().write("<products>" + sb.toString() + "</products>");
-            
-            if(addToXMLCache) {
-                // Save into the Storage Cache so next time it can be used without recreating the data
-                putIntoStorageCache(key, sb.toString());                
-            }
+            response.getWriter().write("<products>" + sb.toString() + "</products>");            
         } else {
             //nothing to show
             context.getRequestDispatcher("/error.jsp").forward(request, response);
@@ -253,10 +257,14 @@ public class AutoCompleteServlet extends HttpServlet {
                     sb.append(contentString);
                     logger.log(Level.INFO, "XML content: {0}", sb.toString());
                 } else {
-                    logger.log(Level.INFO, "Blob {0} DOES NOT include product information data.", blobName);
+                    logger.log(Level.INFO, "Blob {0} exist but DOES NOT include product information data.", blobName);
+                    _storageXMLCacheIndex.remove(key);
+                    logger.log(Level.INFO, "Removed {0} from XML index.", blobName);
                 }
             } else {
                 logger.log(Level.INFO, "{0} not found.", blobName);
+                _storageXMLCacheIndex.remove(key);
+                logger.log(Level.INFO, "{0} was registered but since the file is not found in the Googole Storage let's remove from XML index.", blobName);
             }
         } catch(com.google.cloud.storage.StorageException e) {
             logger.log(Level.SEVERE, "{0}", e.toString());                        
@@ -351,6 +359,30 @@ public class AutoCompleteServlet extends HttpServlet {
             logger.log(Level.SEVERE, "{0}", e.toString());                        
         }
         return retVal;
-    }    
+    }
+
+    /**
+     * Pre-fetch based on the given keyword
+     * @param keyword is the String word that is should be the base for other keywords that start from that. This method is to do pre-fetch for all keywords till PRE-FETCH DEPTH on the Trie Tree Data Structure.
+     */
+    private void requestPreFetch(String keyword) {
+        /**
+         * TODO PRE-FETCH
+         * The idea is to put pre-fetch request on Task QUEUE so the Batch App search for the possible next keywords, and then create the XML cache.
+         */
+        
+        
+        /**
+         * put request on TASK QUEUE
+         * 
+         * Pre-fetch depth/level is defined by TRIE_TREE_PRE_FETCH_DEPTH
+         * This should be processed on the Batch App, but this is for the memo for future reference.
+         */
+        
+        
+        
+        
+        
+    }
 }
 
