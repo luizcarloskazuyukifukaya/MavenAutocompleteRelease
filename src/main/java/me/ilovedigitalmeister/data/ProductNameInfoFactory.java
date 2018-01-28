@@ -25,7 +25,7 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
 
-    public static final int MAX_NAME_LENTH = 32;
+    public static final int MAX_NAME_LENTH = 16;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
