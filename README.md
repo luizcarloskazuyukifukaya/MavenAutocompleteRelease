@@ -1,4 +1,4 @@
-# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.alpha **Experimental**)
+# Autocomplete Sample Demo (Public Preview version 20180128.1.0.1.RC1 **Experimental**)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
 - important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
