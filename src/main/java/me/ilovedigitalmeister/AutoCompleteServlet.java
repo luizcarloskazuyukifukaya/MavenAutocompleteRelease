@@ -41,7 +41,7 @@ public class AutoCompleteServlet extends HttpServlet {
     private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 25; // Max display item number
     private static final int MAX_DISP_CACHE_NUM_ITEM = 200; // Max display item number
     private static final String FILE_EXTENSTION_NAME = ".xml";
-    private static final String BUCKET_UNIQUE_NAME = "autcomplete_xml_cache";
+    private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_cache";
     
     //private static final int MAX_DISP_CACHE_NUM_ITEM = 3000; // Max display item number [FINAL]
     private static boolean debug = false;
