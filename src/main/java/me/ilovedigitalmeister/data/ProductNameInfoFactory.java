@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.logging.*;
 import java.util.HashMap;
 import javax.servlet.ServletException;
+import com.google.common.html.HtmlEscapers;
+
 
 /**
  *
@@ -23,39 +25,39 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
 
-    public static final int MAX_NAME_LENTH = 20;
+    public static final int MAX_NAME_LENGTH = 64;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
      */
-    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 25;
+    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 100;
+    public static int MAX_DB_LOOKUP_NUM_ITEM = 50000;
+    private static boolean _debug = false;
     
     public HashMap getProducts() {
+        if (_debug) {
+            createDemoDataProducts();
+        } else {
+            try {
+                if(getFromDatabase()) {
+
+                    logger.log(Level.INFO, "Data created from database.");
+
+                } else {
+                    /** Create dummy data when instance is created **/            
+                    createDemoDataProducts();
+                }
+            } catch (ServletException ex) {
+                /** Create dummy data when instance is created **/            
+                createDemoDataProducts();
+                logger.log(Level.SEVERE, "SQL Database error occured. {0}", ex.toString());
+            }            
+        }
         return productNameInfos;
     }
     
-    public ProductNameInfoFactory() {
-        
-        try {
-            if(getFromDatabase()) {
-                
-                logger.log(Level.INFO, "Data created from database.");
-                
-            } else {
-                /** Create dummy data when instance is created **/            
-                createDemoDataProducts();
-            }
-        } catch (ServletException ex) {
-            /** Create dummy data when instance is created **/            
-            createDemoDataProducts();
-            logger.log(Level.SEVERE, "SQL Database error occured. {0}", ex.toString());
-        }
-    }
-
     public ProductNameInfoFactory(boolean mode) {
-        
-        /** Create dummy data when instance is created **/            
-        createDemoDataProducts();
+        _debug = mode;        
     }
     
     private HashMap createDemoDataProducts() {
@@ -154,7 +156,7 @@ public class ProductNameInfoFactory {
 
         //sql.append(sqlStr).append(" ORDER BY list_name DESC;");;
         //sql.append(sqlStr).append(" WHERE list_name LIKE 'A%' ORDER BY list_name ASC LIMIT 50;");
-        sql.append(sqlStr).append(" ORDER BY list_name ASC LIMIT 5000;");
+        sql.append(sqlStr).append(" ORDER BY list_name ASC LIMIT ").append(MAX_DB_LOOKUP_NUM_ITEM).append(";");
          
         if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
            // Check the System properties to determine if we are running on appengine or not
@@ -177,12 +179,12 @@ public class ProductNameInfoFactory {
                 int i = 0;
                 while (rs.next()) {                 
                     // Put the data into cache here 
-                    // Limit the size of list_name to 32 [s.substring(0, Math.min(s.length(), MAX_NAME_LENTH));]
+                    // Limit the size of list_name to 64 [s.substring(0, Math.min(s.length(), MAX_NAME_LENTH));]
                     String n = rs.getString("list_name");
                     if (n != null) {
                         n = n.trim();
                         if( !(n.isEmpty()) ) {
-                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENTH));
+                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENGTH));
                             productNameInfos.put(rs.getString("Id"), new ProductNameInfo(rs.getString("Id"), n));
                             i++;                            
                         }
@@ -233,7 +235,7 @@ public class ProductNameInfoFactory {
 
         // WHERE list_name LIKE '[key]%' ... list_name starting with key
         sql.append(sqlStr).append(" WHERE list_name LIKE ").append("'").append(key).append("%'");
-        sql.append(" ORDER BY list_name ASC LIMIT 1000;");
+        sql.append(" ORDER BY list_name ASC LIMIT ").append(MAX_DB_LOOKUP_NUM_ITEM).append(";");
          
         if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
            // Check the System properties to determine if we are running on appengine or not
@@ -264,15 +266,17 @@ public class ProductNameInfoFactory {
                             /**
                              * *******************************************************
                              * LIMITING THE PRODUCT NAME HERE
+                             * MAX LENGTH = KEYWORD LENGTH + MAX_NAME_LENGTH
                              * *******************************************************
                              */
-                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENTH));
+                            n = n.substring(0, Math.min(n.length(), key.length()+MAX_NAME_LENGTH)); // name length is determined by the length of the keyword
                             /**
                              * *******************************************************
                              * LIMITING THE PRODUCT NAME HERE (MAY REMOVE IT)
                              * *******************************************************
                              */
-
+                            // HTML ESCAPE HERE
+                            n = HtmlEscapers.htmlEscaper().escape(n);
                             // XML String created here
                             productNameInfoStr.append("<product>");
                             productNameInfoStr.append("<id>").append(rs.getString("Id")).append("</id>");

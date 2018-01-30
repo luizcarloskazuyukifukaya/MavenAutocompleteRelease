@@ -29,7 +29,7 @@ function init() {
 }
 function requestCacheInitIfnot() {
     
-    var url = "/AutoCompleteServlet?action=refresh"; // No valude specified
+    var url = "/AutoCompleteServlet?id="; // No valude specified
     req = initRequest();
     req.open("GET", url, true);
     req.send(null);    
