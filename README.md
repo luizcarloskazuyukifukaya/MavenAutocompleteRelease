@@ -25,10 +25,11 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 - SQL Statement wrong: " ...WHERE list_name ORDER BY.." should be with WHERE removed.
 - ProductNameInfo.name should be with String.trim() before registering the value.
 - When autocomplete is with "a", it does not give any popup with all product name starting with "a", but when typing "b", it does work as expected. This is cased somehow in relation to the feature to limit entries for popup. This bug has to do with GET request sent without id especified after always hiting "a".
+- When product name includes "'", it fails to retrieve the information from MySQL. This is because the SQL statement should be escaped for this character.
 
 # Bug fix (OPEN)
 - Local execution for debugging not working (still) [Low priority]
-- When product name include "'", it fails to retrieve the information from MySQL. This is because the SQL statement should be escaped for this character.
+- When product name includs "?", it fails. Either on MySQL retrieval or cache creation, I suppose. (Need to investigate, but for the purpose of the prototype we should not care much now.)
 
 # Development Version Only
 - Data Structure - limiting the data size of ProductNameInfo.name (128 characters to 16)

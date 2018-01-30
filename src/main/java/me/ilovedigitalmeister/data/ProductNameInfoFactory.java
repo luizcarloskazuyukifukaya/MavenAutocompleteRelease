@@ -234,7 +234,7 @@ public class ProductNameInfoFactory {
                                         + " FROM autocomplete";
 
         // WHERE list_name LIKE '[key]%' ... list_name starting with key
-        sql.append(sqlStr).append(" WHERE list_name LIKE ").append("'").append(key).append("%'");
+        sql.append(sqlStr).append(" WHERE list_name LIKE ").append("\"").append(key).append("%\"");
         sql.append(" ORDER BY list_name ASC LIMIT ").append(MAX_DB_LOOKUP_NUM_ITEM).append(";");
          
         if (System.getProperty("com.google.appengine.runtime.version").startsWith("Google App Engine/")) {
