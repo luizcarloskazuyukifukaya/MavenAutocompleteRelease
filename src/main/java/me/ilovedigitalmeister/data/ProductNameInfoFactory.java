@@ -25,12 +25,12 @@ public class ProductNameInfoFactory {
     private static final HashMap<String, ProductNameInfo> productNameInfos = new HashMap();
     private static final Logger logger = Logger.getLogger(ProductNameInfoFactory.class.getName());
 
-    public static final int MAX_NAME_LENTH = 32;
+    public static final int MAX_NAME_LENGTH = 64;
 
     /**
      * ONLY DISPLY MAX_DISP_CANDIATE_NUM_ITEM
      */
-    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 50;
+    public static int MAX_DISP_CANDIDATE_NUM_ITEM = 100;
     public static int MAX_DB_LOOKUP_NUM_ITEM = 50000;
     private static boolean _debug = false;
     
@@ -179,12 +179,12 @@ public class ProductNameInfoFactory {
                 int i = 0;
                 while (rs.next()) {                 
                     // Put the data into cache here 
-                    // Limit the size of list_name to 32 [s.substring(0, Math.min(s.length(), MAX_NAME_LENTH));]
+                    // Limit the size of list_name to 64 [s.substring(0, Math.min(s.length(), MAX_NAME_LENTH));]
                     String n = rs.getString("list_name");
                     if (n != null) {
                         n = n.trim();
                         if( !(n.isEmpty()) ) {
-                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENTH));
+                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENGTH));
                             productNameInfos.put(rs.getString("Id"), new ProductNameInfo(rs.getString("Id"), n));
                             i++;                            
                         }
@@ -266,9 +266,10 @@ public class ProductNameInfoFactory {
                             /**
                              * *******************************************************
                              * LIMITING THE PRODUCT NAME HERE
+                             * MAX LENGTH = KEYWORD LENGTH + MAX_NAME_LENGTH
                              * *******************************************************
                              */
-                            n = n.substring(0, Math.min(n.length(), MAX_NAME_LENTH));
+                            n = n.substring(0, Math.min(n.length(), key.length()+MAX_NAME_LENGTH)); // name length is determined by the length of the keyword
                             /**
                              * *******************************************************
                              * LIMITING THE PRODUCT NAME HERE (MAY REMOVE IT)

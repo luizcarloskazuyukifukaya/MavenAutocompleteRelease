@@ -17,18 +17,21 @@ xsi:schemaLocation='http://kenai.com/projects/nbappengine/downloads/download/sch
     <!-- JAPAN 2
     Deployed to gautocompletefinal https://gautocompletefinal.appspot.com/
     <application>gautocompletefinal</application>
+    -->
 
+    <!-- JAPAN 3
+    Deployed to gpresentationproject https://gpresentationproject.appspot.com/
+    <application>gpresentationproject</application>
 
-    THIS ONE IS CURRENTLY THE LATEST WORKING SITE: 20180128 11:44
-    <application>autocompletepresentation</application>
-
+    THIS ONE IS CURRENTLY THE LATEST WORKING SITE: 20180130 09:21
+    <application>gpresentationproject</application>
     -->
     
     <!-- DEFAULT DEPLOYMENT HERE *FINAL -->
     <application>gautocompletefinal</application>
 
 
-    <version>1</version>
+    <version>20180130t0921</version>
     <!--    <ssl-enabled>false</ssl-enabled>
     <sessions-enabled>true</sessions-enabled>
     -->
