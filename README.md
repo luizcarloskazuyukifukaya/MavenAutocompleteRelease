@@ -1,8 +1,9 @@
-# Autocomplete Sample Demo (Public Preview version 20180128.1.1.0.RC3 ** LENGTH MAX Release**)
+# Autocomplete Sample Demo (Public Preview version 20180130t0921.RC4 ** MAX EXTENDED Release  **)
 This sample has a limitation where the cache into the memory is not optimized for search for data of many product names. One way to improve this application will be to implement a faster cache or/and to change the data storage structure to trie tree data structure.
 
-- important to remmber: SQL statement is written with SELECT to return limited numbers of recordes.
+- important to remember: SQL statement is written with SELECT to return limited numbers of recordes.
 - This is sample application is deployed to [Final Demo URL](http://gautocompletefinal.appspot.com/)
+- Google Storage Bucket name is "autocomplete_xml_big_cache" in this source code.
 
 # Achieved
 - Autocomplete core feature, where GET request is sent to the Servlet (AutoCocompleteServlet?id=*) whenever the user type a letter in the input field. AJAX is used to process this task in the client browser application.
@@ -12,6 +13,8 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 
 # Experiments
 - No ProductNameInfo cache from DB no longer exist. Only XML cache on Google Storage for this version. Not yet with pre-fetch mechanism. Pre-fetch to be implemented later.
+- POPUP NUM now 100
+- Product name length is know  (keyword length + MAX_NAME_LENGTH) : Every time user types a keyword, the product name shown is extended.
 
 # Areas for improvements
 - Global scallability (Deployment to region, but still try to reverage one central database for easy operation of data integrety)
@@ -25,13 +28,14 @@ Cache design is not yet the best to perform quick search as fast as possible (NE
 
 # Bug fix (OPEN)
 - Local execution for debugging not working (still) [Low priority]
+- When product name include "'", it fails to retrieve the information from MySQL. This is because the SQL statement should be escaped for this character.
 
 # Development Version Only
 - Data Structure - limiting the data size of ProductNameInfo.name (128 characters to 16)
 
 # Open Items
 - Data Structure with Trie Tree Support
-- App Engine Memcache implementation (Maybe not necessary)
+- App Engine Memcache implementation for XML file index and for the Trie Tree Data to be shared among batch app processes.
 - Global deployment for better performance on the regions
 - Queue to be used to dispatch Autocomplete request (specification to be confirmed first)
 
