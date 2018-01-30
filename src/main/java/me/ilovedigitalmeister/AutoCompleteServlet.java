@@ -38,7 +38,7 @@ public class AutoCompleteServlet extends HttpServlet {
     private static final int MAX_DISP_CANDIDATE_NUM_ITEM = 50; // Max display item number
     private static final int MAX_DISP_CACHE_NUM_ITEM = 200; // Max display item number
     private static final String FILE_EXTENSTION_NAME = ".xml";
-    private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_big_cache"; // gautocompletefinal
+    private static final String BUCKET_UNIQUE_NAME = "autocomplete_xml_cache"; // gautocompletefinal
     /**
      * Bucket to be different per Project ID
      * autocomplete_xml_storage_cache :  gpresentationproject
